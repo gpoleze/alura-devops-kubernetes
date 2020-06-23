@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-application-news
+spec:
+  selector:
+    matchLabels: 
+      name: application-pod
+  template:
+    metadata:
+      labels:
+        name: application-pod
+    spec:
+      containers:
+        - name: container-applications-store
+          image: gpoleze/alura-news-portal:latest
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 80
