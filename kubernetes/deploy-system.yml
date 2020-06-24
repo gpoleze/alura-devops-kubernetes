@@ -1,0 +1,77 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: permissions-images
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: permissions-sessions
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: statefulset-system
+spec:
+  serviceName: statefulset-system
+  selector:
+    matchLabels:
+      name: statefulset-system-pod
+  template:
+    metadata:
+      labels:
+        name: statefulset-system-pod
+    spec:
+      containers:
+        - name: container-statefulset-system-pod
+          image: gpoleze/alura-news-system:latest
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: images
+              mountPath: /var/www/html/uploads
+            - name: sessions
+              mountPath: /tmp
+      volumes:
+        - name: images
+          persistentVolumeClaim:
+              claimName: permissions-images
+        - name: sessions
+          persistentVolumeClaim:
+              claimName: permissions-sessions
+
+---
+
+apiVersion: v1
+kind: Service
+metadata: 
+  name: service-stateful-system
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 80
+      nodePort: 30002
+  selector:
+    name: statefulset-system-pod
+
+
+
+---
+

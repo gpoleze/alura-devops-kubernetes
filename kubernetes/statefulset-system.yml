@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: statefulset-system
+spec:
+  serviceName: statefulset-system
+  selector:
+    matchLabels:
+      name: statefulset-system-pod
+  template:
+    metadata:
+      labels:
+        name: statefulset-system-pod
+    spec:
+      containers:
+        - name: container-statefulset-system-pod
+          image: gpoleze/alura-news-system:latest
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: images
+              mountPath: /var/www/html/uploads
+            - name: sessions
+              mountPath: /tmp
+      volumes:
+        - name: images
+          persistentVolumeClaim:
+              claimName: permissions-images
+        - name: sessions
+          persistentVolumeClaim:
+              claimName: permissions-sessions
