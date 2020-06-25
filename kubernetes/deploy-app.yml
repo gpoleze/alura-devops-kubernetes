@@ -15,8 +15,22 @@ spec:
         - name: container-applications-store
           image: gpoleze/alura-news-portal:latest
           resources:
-            limits:
-              memory: "128Mi"
-              cpu: "500m"
+            requests:
+              cpu: "200m"
           ports:
             - containerPort: 80
+
+---
+
+apiVersion: v1
+kind: Service
+metadata: 
+  name: service-application-news
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 80
+      nodePort: 30001
+  selector:
+    name: application-pod
