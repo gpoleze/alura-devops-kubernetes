@@ -22,6 +22,10 @@ spec:
               mountPath: /var/www/html/uploads
             - name: sessions
               mountPath: /tmp
+          lifecycle:
+            postStart:
+              exec:
+                command: ["sh", "notifications.sh"]
       volumes:
         - name: images
           persistentVolumeClaim:
